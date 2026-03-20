@@ -59,20 +59,29 @@ public class PasswordManager extends Application {
 
             GeneratePassword.setResultConverter(button -> {
                 if (button == OK) {
-                    String newPassword = "";
+                    if (passwordEncrypt.getText().trim().isEmpty()){
+                        String newPassword = "";
                         int tempIntForLoop = Integer.parseInt(lengthOfPassword.getText());
                         for (int i = 0; i < tempIntForLoop; i++) {
                             newPassword += passHelp.poolIndexChoose();
                         }
                         try (PrintWriter pw = new PrintWriter(new FileWriter(passwordStorage, true))) {
                             pw.println(newPassword);
-                        } catch (FileNotFoundException ex) {
-                            throw new RuntimeException(ex);
                         } catch (IOException ex) {
                             throw new RuntimeException(ex);
                         }
                         result.setText(findLastString());
                         passHelp.setPassword(result.getText());
+                    }else {
+                        result.setText(passHelp.caesarEncrypt(passwordEncrypt.getText()));
+                        passHelp.setPassword(passHelp.caesarEncrypt(passwordEncrypt.getText()));
+                        try (PrintWriter pw = new PrintWriter(new FileWriter(passwordStorage, true))) {
+                            pw.println(result.getText());
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        System.out.println("1");
+                    }
                     }
                 return null;
             });
