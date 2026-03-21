@@ -1,7 +1,6 @@
 package com.example.passwordman.passwordmanager;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
@@ -12,16 +11,14 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.util.Random;
 import java.util.Scanner;
 
-import static java.lang.constant.ConstantDescs.NULL;
 import static javafx.scene.control.ButtonType.CANCEL;
 import static javafx.scene.control.ButtonType.OK;
 
 public class PasswordManager extends Application {
     public File passwordStorage = new File("Passwords storage");
-    password passHelp = new password();
+    Password passHelp = new Password();
     @Override
     public void start(Stage stage) throws IOException {
         GridPane grid = new GridPane();
@@ -34,23 +31,23 @@ public class PasswordManager extends Application {
         Button btnGenerateNewPassword = new Button("Generate");
         Button btnCopyPassword = new Button("Copy");
 
-        Text passwordDiff = new Text("your password difficulty is " + passHelp.checkStrengthOfPassword());
+        Text passwordDiff = new Text("your Password difficulty is " + passHelp.checkStrengthOfPassword());
 
         result.textProperty().addListener((observable, oldValue, newValue) -> {
             passHelp.setPassword(newValue);
             byte strength = passHelp.checkStrengthOfPassword();
-            passwordDiff.setText("your password difficulty is " + strength);
+            passwordDiff.setText("your Password difficulty is " + strength);
         });
 
         btnGenerateNewPassword.setOnAction(e -> {
-            Dialog<password> GeneratePassword = new Dialog<>();
-            VBox generatePasswordVBox = new VBox(200);
+            Dialog<Password> GeneratePassword = new Dialog<>();
+            VBox generatePasswordVBox = new VBox(10);
             TextField passwordEncrypt = new TextField();
-            passwordEncrypt.setPromptText("Type here your password");
+            passwordEncrypt.setPromptText("Type here your Password");
             Text helpText = new Text("Skip if you didn`t wanna encrypt any word");
             TextField lengthOfPassword = new TextField();
             lengthOfPassword.setText("8");
-            lengthOfPassword.setPromptText("type Here length of your password");
+            lengthOfPassword.setPromptText("type Here length of your Password");
             Text helpTextWithLength = new Text("type here length");
 
             generatePasswordVBox.getChildren().addAll(passwordEncrypt, helpText,helpTextWithLength, lengthOfPassword);
@@ -73,8 +70,9 @@ public class PasswordManager extends Application {
                         result.setText(findLastString());
                         passHelp.setPassword(result.getText());
                     }else {
-                        result.setText(passHelp.caesarEncrypt(passwordEncrypt.getText()));
-                        passHelp.setPassword(passHelp.caesarEncrypt(passwordEncrypt.getText()));
+                        String encrypted = passHelp.caesarEncrypt(passwordEncrypt.getText());
+                        result.setText(encrypted);
+                        passHelp.setPassword(encrypted);
                         try (PrintWriter pw = new PrintWriter(new FileWriter(passwordStorage, true))) {
                             pw.println(result.getText());
                         } catch (IOException ex) {

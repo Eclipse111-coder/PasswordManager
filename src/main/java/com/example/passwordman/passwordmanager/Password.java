@@ -1,61 +1,46 @@
 package com.example.passwordman.passwordmanager;
 
-import java.util.ArrayList;
 import java.util.Random;
 
-public class password {
+public class Password {
 
     private String password = "";
     private byte passwordStrength = checkStrengthOfPassword();
     private String passwordPool = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()\\!№;%:?*";
-    // it`s an alphabet in upper case
-    private char[] passwordUPool = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
-    // it`s an alphabet in lower case
-    private char[] passwordLPool = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
+    private static final String U_POOL = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String L_POOL = "abcdefghijklmnopqrstuvwxyz";
+
+    private final Random shift = new Random();
 
     public String caesarEncrypt(String needleText){
-        byte shift = 8;
+        int shiftInt = shift.nextInt(26);
         int pos = -1;
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < needleText.length(); i++) {
             char c = needleText.charAt(i);
             if (Character.isUpperCase(needleText.charAt(i))) {
-                for (int j = 0; j < passwordUPool.length; j++){
-                    if (passwordUPool[j] == c) {
-                        pos = j;
-                        break;
-                    }
-                }
+                pos = U_POOL.indexOf(c);
                 if (pos != -1) {
-                    pos = (pos + shift) % 26;
+                    pos = (pos + shiftInt) % 26;
                     if (pos < 0) pos += 26;
-                    c = passwordUPool[pos];
+                    c = U_POOL.charAt(pos);
                     result.append(c);
                 } else {
                     result.append(c);
                 }
-                c = passwordUPool[pos];
             } else if (Character.isLowerCase(needleText.charAt(i))) {
-                for (byte j = 0; j < passwordLPool.length; j++) {
-                    if (passwordLPool[j] == c) {
-                        pos = j;
-                        break;
-                    }
-                }
-                pos += shift;
+                pos = L_POOL.indexOf(c);
                 if (pos != -1) {
-                    pos = (pos + shift) % 26;
+                    pos = (pos + shiftInt) % 26;
                     if (pos < 0) pos += 26;
-                    c = passwordLPool[pos];
+                    c = L_POOL.charAt(pos);
                     result.append(c);
                 } else {
                     result.append(c);
                 }
-                c = passwordLPool[pos];
             }else {
                 result.append(c);
             }
-
         }
         return result.toString();
     }
@@ -87,27 +72,12 @@ public class password {
         return passwordPool.charAt(index);
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public byte getPasswordStrength() {
-        return passwordStrength;
-    }
-
-    public void setPasswordStrength(byte passwordStrength) {
-        this.passwordStrength = passwordStrength;
-    }
-
-    public String getPasswordPool() {
-        return passwordPool;
     }
 
     public void setPasswordPool(String passwordPool) {
         this.passwordPool = passwordPool;
     }
+
 }
